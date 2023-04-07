@@ -2,7 +2,7 @@
 
 To build a docker image of ROS2 on your Ubuntu 20.04 LTS OS.
  
-1. run the following command directly in this directory:
+1. Run the following command directly in this directory:
     ```
     ./BUILD-DOCKER-IMAGE.sh
     ```
@@ -16,3 +16,7 @@ To build a docker image of ROS2 on your Ubuntu 20.04 LTS OS.
     ./RUN-DOCKER.sh
     ```
     Use ``` docker ps ``` to check the container's information, its name should be *$(YOUR_USER_NAME)-ros2-1*.
+
+> **NOTE**:
+> The container would be stopped if the PC is rebooted, but it would still exist. 
+> Just run ```./RUN-DOCKER.sh``` again to start it.
