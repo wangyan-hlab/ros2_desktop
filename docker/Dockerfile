@@ -23,7 +23,7 @@ RUN curl -sSL http://get.gazebosim.org | sh && \
 
 # Build the workspace
 RUN /bin/bash -c cd ~/ros_ws/src && \
-   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom
+   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom/Universal_Robots_ROS2_Driver
 
 RUN git clone https://github.com/ros/rosdistro.git /etc/ros/ros_github/rosdistro/
 COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
