@@ -21,6 +21,10 @@ RUN apt update && \
 RUN curl -sSL http://get.gazebosim.org | sh && \
     sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs -y
 
+# Build the workspace
+RUN /bin/bash -c cd ~/ros_ws/src && \
+   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom
+
 RUN git clone https://github.com/ros/rosdistro.git /etc/ros/ros_github/rosdistro/
 COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
 COPY ros_bypass/__init__.py /usr/lib/python3/dist-packages/rosdistro/
@@ -28,10 +32,6 @@ COPY ros_bypass/20-default.list /etc/ros/rosdep/sources.list.d/
 
 # Install UR_ROS2_Driver    
 RUN apt-get install ros-${ROS_DISTRO}-ur-robot-driver -y
-
-# Build the workspace
-RUN /bin/bash -c cd ~/ros_ws/src && \
-   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom
 
 RUN /bin/bash -c cd ~/ros_ws && \ 
     rosdep update && \
