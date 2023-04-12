@@ -1,5 +1,4 @@
-FROM osrf/ros:foxy-desktop
-
+FROM althack/ros2:humble-full
 # Install some tools
 RUN apt update && \
     apt install vim git make python3-pip -y
@@ -27,12 +26,12 @@ COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
 COPY ros_bypass/__init__.py /usr/lib/python3/dist-packages/rosdistro/
 COPY ros_bypass/20-default.list /etc/ros/rosdep/sources.list.d/
 
+# Install UR_ROS2_Driver    
+RUN apt-get install ros-${ROS_DISTRO}-ur-robot-driver -y
+
 # Build the workspace
 RUN /bin/bash -c cd ~/ros_ws/src && \
-    git clone -b foxy_ur https://github.com/wangyan-hlab/ros2_desktop.git glozzom
-
-#RUN /bin/bash -c cd ~/ros_ws && \
-#    vcs import src --skip-existing --input src/glozzom/ur_driver/Universal_Robots_ROS2_Driver.${ROS_DISTRO}.repos
+   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom
 
 RUN /bin/bash -c cd ~/ros_ws && \ 
     rosdep update && \
@@ -42,7 +41,4 @@ RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash"
 RUN colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release && \
     /bin/bash -c "source install/setup.bash"    
     
-# Install UR_ROS2_Driver    
-#RUN apt-get install ros-${ROS_DISTRO}-ur-robot-driver
-
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
