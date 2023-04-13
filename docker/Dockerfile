@@ -1,5 +1,5 @@
 FROM osrf/ros:foxy-desktop
-
+## Prerequisites
 # Install some tools
 RUN apt update && \
     apt install vim git make python3-pip -y
@@ -22,27 +22,28 @@ RUN apt update && \
 RUN curl -sSL http://get.gazebosim.org | sh && \
     sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs -y
 
-# Build the workspace
-RUN /bin/bash -c cd ~/ros_ws/src && \
-    git clone -b foxyhttps://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git glozzom/Universal_Robots_ROS2_Driver
+## Build the workspace
+RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
+    mkdir -p ~/ros_ws/src"
+# Download source
+RUN /bin/bash -c "cd ~/ros_ws/src && \
+    git clone -b foxy_ur https://github.com/wangyan-hlab/ros2_desktop.git glozzom"
     
 RUN git clone https://github.com/ros/rosdistro.git /etc/ros/ros_github/rosdistro/
 COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
 COPY ros_bypass/__init__.py /usr/lib/python3/dist-packages/rosdistro/
 COPY ros_bypass/20-default.list /etc/ros/rosdep/sources.list.d/
 
-RUN /bin/bash -c cd ~/ros_ws && \
-    vcs import src/glozzom --skip-existing --input src/glozzom/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
-
-RUN /bin/bash -c cd ~/ros_ws && \ 
+RUN /bin/bash -c "cd ~/ros_ws && \
+    vcs import src/glozzom --skip-existing --input src/glozzom/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos"
+# Install dependencies
+RUN /bin/bash -c "cd ~/ros_ws && \ 
     rosdep update && \
-    rosdep install --ignore-src --from-paths src -y -r
-    
-RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash"
-RUN colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release && \
-    /bin/bash -c "source install/setup.bash"    
-    
-# Install UR_ROS2_Driver    
-#RUN apt-get install ros-${ROS_DISTRO}-ur-robot-driver
+    rosdep install --ignore-src --from-paths src -y -r"
+# Build    
+RUN /bin/bash -c "cd ~/ros_ws && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release && \
+    source install/setup.bash"    
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
