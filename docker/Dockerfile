@@ -17,10 +17,10 @@ RUN apt update && \
     apt install ~nros-$ROS_DISTRO-rqt* -y
 # Install rviz2
 RUN apt update && \
-    sudo apt install ros-$ROS_DISTRO-rviz2 -y
+    apt install ros-$ROS_DISTRO-rviz2 -y
 # Install gazebo11
 RUN curl -sSL http://get.gazebosim.org | sh && \
-    sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs -y
+    apt install ros-$ROS_DISTRO-gazebo-ros-pkgs -y
 
 ## Build the workspace
 RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
@@ -34,8 +34,12 @@ COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
 COPY ros_bypass/__init__.py /usr/lib/python3/dist-packages/rosdistro/
 COPY ros_bypass/20-default.list /etc/ros/rosdep/sources.list.d/
 
-RUN /bin/bash -c "cd ~/ros_ws && \
-    vcs import src/glozzom --skip-existing --input src/glozzom/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos"
+# Install ur_driver from binary packages
+RUN apt update && \
+    apt-get install ros-${ROS_DISTRO}-ur-robot-driver -y
+# Build from source
+# RUN /bin/bash -c "cd ~/ros_ws && \
+#     vcs import src/glozzom --skip-existing --input src/glozzom/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos"
 # Install dependencies
 RUN /bin/bash -c "cd ~/ros_ws && \ 
     rosdep update && \
