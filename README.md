@@ -1,5 +1,7 @@
 # ROS2 Docker Image
 
+## Building
+
 To build a docker image of ROS2_foxy_ur with Gazebo simulation on your Ubuntu 20.04 LTS OS.
  
 1. Run the following command directly in this directory:
@@ -20,3 +22,14 @@ To build a docker image of ROS2_foxy_ur with Gazebo simulation on your Ubuntu 20
 > **NOTE**:
 > The container would be stopped if the PC is rebooted, but it would still exist. 
 > Just run ```./RUN-DOCKER.sh``` again to start it.
+
+## Running Simulation
+
+```bash
+ros2 launch ur_simulation_gazebo ur_sim_control.launch.py
+```
+
+Move robot using test script from  `ur_bringup` package:
+```bash
+ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
+```
