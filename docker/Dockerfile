@@ -42,7 +42,7 @@ RUN /bin/bash -c "cd ~/ros_ws && \
 # Build    
 RUN /bin/bash -c "cd ~/ros_ws && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --mixin rel-with-deb-info compile-commands ccache && \
+    colcon build --symlink-install --mixin release rel-with-deb-info compile-commands ccache && \
     source install/setup.bash"    
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
