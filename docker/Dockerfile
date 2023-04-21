@@ -1,8 +1,9 @@
 FROM osrf/ros:foxy-desktop
 ## Prerequisites
 # Install some tools
+RUN apt-get autoclean
 RUN apt update && \
-    apt install vim git make python3-pip -y
+    apt install vim git make python3-pip ccache -y
 RUN python3 -m pip install vcstool
 
 # Install colcon
@@ -29,17 +30,11 @@ RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
 RUN /bin/bash -c "cd ~/ros_ws/src && \
     git clone -b foxy_ur https://github.com/wangyan-hlab/ros2_desktop.git glozzom"
     
-RUN git clone https://github.com/ros/rosdistro.git /etc/ros/ros_github/rosdistro/
+COPY ros_bypass/rosdistro/ /etc/ros/ros_github/rosdistro/
 COPY ros_bypass/rep3.py /usr/lib/python3/dist-packages/rosdep2/
 COPY ros_bypass/__init__.py /usr/lib/python3/dist-packages/rosdistro/
 COPY ros_bypass/20-default.list /etc/ros/rosdep/sources.list.d/
 
-# Install ur_driver from binary packages
-RUN apt update && \
-    apt-get install ros-${ROS_DISTRO}-ur-robot-driver -y
-# Build from source
-# RUN /bin/bash -c "cd ~/ros_ws && \
-#     vcs import src/glozzom --skip-existing --input src/glozzom/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos"
 # Install dependencies
 RUN /bin/bash -c "cd ~/ros_ws && \ 
     rosdep update && \
@@ -47,7 +42,7 @@ RUN /bin/bash -c "cd ~/ros_ws && \
 # Build    
 RUN /bin/bash -c "cd ~/ros_ws && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release && \
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --mixin rel-with-deb-info compile-commands ccache && \
     source install/setup.bash"    
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
